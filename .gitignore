@@ -218,7 +218,6 @@ wp-content/plugins/hello.php
 *.sig
 
 pkg/
-src/
 ### Emacs template
 # -*- mode: gitignore; -*-
 \#*\#
