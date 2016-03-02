@@ -49,14 +49,13 @@ public class Simplex {
   }
 
   public void solveLinearProblem() {
-    System.out.println("Tableau initial : ");
-    getCurrentStep().printTab();
+    printTab();
+
     while (!isOptimalSolution()) {
       computeNextStep();
-      System.out.println("Tableau numéro " + getCurrentStepNumber() + " : ");
-      getCurrentStep().printTab();
+      printTab();
     }
-    getCurrentStep().printSolution();
+    printSolution();
   }
 
   private boolean isOptimalSolution() {
@@ -76,11 +75,6 @@ public class Simplex {
   private void computeNextStep() {
     final int indexOfColumnToPutIn = getIndexOfColumnToPutIn();
     final int indexOfLineToExtract = getIndexOfLineToExtract(indexOfColumnToPutIn);
-    /*
-    System.out.println(
-        "Step : " + getCurrentStepNumber() + ", line to extract : " + indexOfLineToExtract
-            + ", column to put in : " + indexOfColumnToPutIn);
-            */
 
     LinearSystem currentStep = getCurrentStep();
     LinearSystem nextStep    = new LinearSystem(getCurrentStep());
@@ -109,7 +103,7 @@ public class Simplex {
       }
     }
 
-    nextStep.getSolutionValues()[indexOfColumnToPutIn] = nextStep.getLineValue(indexOfLineToExtract);
+    nextStep.getSolutionValues()[indexOfColumnToPutIn] = indexOfLineToExtract;
     this.system.add(nextStep);
 
   }
@@ -163,11 +157,22 @@ public class Simplex {
     return variable.compareTo(BigDecimal.ZERO) != 0;
   }
 
+  private LinearSystem getCurrentStep() {
+    return system.get(system.size() - 1);
+  }
+
+  private void printTab() {
+    String str = getCurrentStepNumber() == 0 ? "Tableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
+
+    System.out.println(str);
+    getCurrentStep().printTab();
+  }
+
   private int getCurrentStepNumber() {
     return system.size() - 1;
   }
 
-  private LinearSystem getCurrentStep() {
-    return system.get(system.size() - 1);
+  private void printSolution() {
+    getCurrentStep().printSolution();
   }
 }

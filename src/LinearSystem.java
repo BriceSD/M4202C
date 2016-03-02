@@ -13,7 +13,7 @@ public class LinearSystem {
 
 // ------------------------------ FIELDS ------------------------------
 
-  private BigDecimal[]   solutionValues;
+  private int[]   solutionValues;
   private BigDecimal[]   ecoFunction;
   private BigDecimal[][] constraints;
   private int            nbrVariables;
@@ -34,10 +34,6 @@ public class LinearSystem {
     nbrVariables = sc.nextInt();
     partialEcoFunction = new BigDecimal[nbrVariables + 1];
 
-    solutionValues = new BigDecimal[nbrVariables];
-    for (int k = 0; k < nbrVariables; k++)
-      solutionValues[k] = BigDecimal.ZERO;
-
     System.out.println("\nFonction économique : ");
 
     int        i = 0;
@@ -48,8 +44,18 @@ public class LinearSystem {
       partialEcoFunction[i] = valeur;
       i++;
     }
+
     partialEcoFunction[i] = BigDecimal.ZERO;
+
+    initializeSolutionValues();
+
     return partialEcoFunction;
+  }
+
+  private void initializeSolutionValues() {
+    solutionValues = new int[nbrVariables];
+    for (int k = 0; k < nbrVariables; k++)
+      solutionValues[k] = -1;
   }
 
   private void makeConstraints(BigDecimal[][] partialConstraints) {
@@ -153,7 +159,7 @@ public class LinearSystem {
     return nbrVariables;
   }
 
-  public BigDecimal[] getSolutionValues() {
+  public int[] getSolutionValues() {
     return solutionValues;
   }
 
@@ -208,9 +214,12 @@ public class LinearSystem {
     str += "\nSolution : \n";
     str += "Z = " +  z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
 
-    for (BigDecimal solutionValue : solutionValues) {
+    for (int solutionValueIndex : solutionValues) {
       str += "x" + (++i) + " = ";
-      str += solutionValue.setScale(2, RoundingMode.HALF_EVEN).toPlainString();
+      if (solutionValueIndex != -1)
+        str += getLineValue(solutionValueIndex).setScale(2, RoundingMode.HALF_EVEN).toPlainString();
+      else
+        str += "0";
       str += "\n";
     }
 
