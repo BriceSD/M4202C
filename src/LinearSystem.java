@@ -13,6 +13,7 @@ public class LinearSystem {
 
 // ------------------------------ FIELDS ------------------------------
 
+  private BigDecimal[]   solutionValues;
   private BigDecimal[]   ecoFunction;
   private BigDecimal[][] constraints;
   private int            nbrVariables;
@@ -32,6 +33,10 @@ public class LinearSystem {
     System.out.println("Entrez le nombre de variables : ");
     nbrVariables = sc.nextInt();
     partialEcoFunction = new BigDecimal[nbrVariables + 1];
+
+    solutionValues = new BigDecimal[nbrVariables];
+    for (int k = 0; k < nbrVariables; k++)
+      solutionValues[k] = BigDecimal.ZERO;
 
     System.out.println("\nFonction économique : ");
 
@@ -71,6 +76,10 @@ public class LinearSystem {
 
   private int getConstraintsLength() {return constraints[0].length;}
 
+  public BigDecimal getLineValue(int line){
+    return constraints[line][getConstraintsLength() - 1];
+  }
+
   private BigDecimal[][] askConstraints() {
     Scanner        sc = new Scanner(System.in);
     BigDecimal[][] partialConstraints;
@@ -108,8 +117,10 @@ public class LinearSystem {
 
   public LinearSystem(LinearSystem linearSystem) {
     this.ecoFunction = linearSystem.getEcoFunction().clone();
+    this.solutionValues = linearSystem.getSolutionValues().clone();
     this.nbrVariables = linearSystem.getNbrVariables();
     this.constraints = new BigDecimal[linearSystem.getConstraints().length][];
+
     for (int i = 0; i < this.constraints.length; i++)
       this.constraints[i] = linearSystem.getConstraints()[i].clone();
   }
@@ -142,6 +153,10 @@ public class LinearSystem {
     return nbrVariables;
   }
 
+  public BigDecimal[] getSolutionValues() {
+    return solutionValues;
+  }
+
   public void printTab() {
     System.out.println(this.toString());
   }
@@ -159,9 +174,9 @@ public class LinearSystem {
   private String getVariablesLineAsString() {
     String str = "";
     for (int i = 0; i < nbrVariables; i++)
-      str += "x" + (i + 1) + "\t\t";
+      str += "x" + (i + 1) + "\t\t\t";
     for (int i = nbrVariables; i < ecoFunction.length - 1; i++)
-      str += "e" + (i - nbrVariables + 1) + "\t\t";
+      str += "e" + (i - nbrVariables + 1) + "\t\t\t";
     str += "\n";
     return str;
   }
@@ -183,5 +198,22 @@ public class LinearSystem {
     }
     str += "\n";
     return str;
+  }
+
+  public void printSolution(){
+    String str = "";
+    int i = 0;
+    BigDecimal z = ecoFunction[ecoFunction.length - 1];
+
+    str += "\nSolution : \n";
+    str += "Z = " +  z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
+
+    for (BigDecimal solutionValue : solutionValues) {
+      str += "x" + (++i) + " = ";
+      str += solutionValue.setScale(2, RoundingMode.HALF_EVEN).toPlainString();
+      str += "\n";
+    }
+
+    System.out.println(str);
   }
 }

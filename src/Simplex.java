@@ -49,8 +49,14 @@ public class Simplex {
   }
 
   public void solveLinearProblem() {
-    while (!isOptimalSolution())
+    System.out.println("Tableau initial : ");
+    getCurrentStep().printTab();
+    while (!isOptimalSolution()) {
       computeNextStep();
+      System.out.println("Tableau numéro " + getCurrentStepNumber() + " : ");
+      getCurrentStep().printTab();
+    }
+    getCurrentStep().printSolution();
   }
 
   private boolean isOptimalSolution() {
@@ -70,11 +76,12 @@ public class Simplex {
   private void computeNextStep() {
     final int indexOfColumnToPutIn = getIndexOfColumnToPutIn();
     final int indexOfLineToExtract = getIndexOfLineToExtract(indexOfColumnToPutIn);
+    /*
     System.out.println(
         "Step : " + getCurrentStepNumber() + ", line to extract : " + indexOfLineToExtract
             + ", column to put in : " + indexOfColumnToPutIn);
+            */
 
-    System.out.println(getCurrentStep());
     LinearSystem currentStep = getCurrentStep();
     LinearSystem nextStep    = new LinearSystem(getCurrentStep());
 
@@ -85,8 +92,7 @@ public class Simplex {
     for (int i = 0; i < nextStep.getEcoFunction().length; i++) {
       nextStep.getEcoFunction()[i] = nextStep.getEcoFunction()[i].subtract(
           coefficient.multiply(currentStep.getEcoFunction()[indexOfColumnToPutIn], PRECISION)
-              .multiply(currentStep.getConstraints()[indexOfLineToExtract][i], PRECISION),
-          PRECISION);
+            .multiply(currentStep.getConstraints()[indexOfLineToExtract][i], PRECISION), PRECISION);
     }
 
     for (int i = 0; i < currentStep.getConstraints().length; i++) {
@@ -102,7 +108,8 @@ public class Simplex {
                   ROUND_SCALE, ROUND_EVEN);
       }
     }
-    System.out.println(nextStep);
+
+    nextStep.getSolutionValues()[indexOfColumnToPutIn] = nextStep.getLineValue(indexOfLineToExtract);
     this.system.add(nextStep);
 
   }
