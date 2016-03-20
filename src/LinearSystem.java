@@ -13,7 +13,7 @@ public class LinearSystem {
 
 // ------------------------------ FIELDS ------------------------------
 
-  private int[]   solutionValues;
+  private int[]          solutionValues;
   private BigDecimal[]   ecoFunction;
   private BigDecimal[][] constraints;
   private int            nbrVariables;
@@ -22,8 +22,19 @@ public class LinearSystem {
 
   public LinearSystem() {
     BigDecimal[] partialEcoFunction = askEcoFunction();
+    //FAIRE LES CONTRAINTES EN PREMIER
     makeConstraints(askConstraints());
     makeEcoFunction(partialEcoFunction);
+    initializeSolutionValues();
+  }
+
+  public LinearSystem(BigDecimal[] partialEcoFunction, BigDecimal[][] partialConstraints,
+      int nbrVariables) {
+    this.nbrVariables = nbrVariables;
+    //FAIRE LES CONTRAINTES EN PREMIER
+    makeConstraints(partialConstraints);
+    makeEcoFunction(partialEcoFunction);
+    initializeSolutionValues();
   }
 
   private BigDecimal[] askEcoFunction() {
@@ -47,15 +58,14 @@ public class LinearSystem {
 
     partialEcoFunction[i] = BigDecimal.ZERO;
 
-    initializeSolutionValues();
 
     return partialEcoFunction;
   }
 
   private void initializeSolutionValues() {
     solutionValues = new int[nbrVariables];
-    for (int k = 0; k < nbrVariables; k++)
-      solutionValues[k] = -1;
+    for (int i = 0; i < nbrVariables; i++)
+      solutionValues[i] = -1;
   }
 
   private void makeConstraints(BigDecimal[][] partialConstraints) {
@@ -82,7 +92,7 @@ public class LinearSystem {
 
   private int getConstraintsLength() {return constraints[0].length;}
 
-  public BigDecimal getLineValue(int line){
+  public BigDecimal getLineValue(int line) {
     return constraints[line][getConstraintsLength() - 1];
   }
 
@@ -131,11 +141,6 @@ public class LinearSystem {
       this.constraints[i] = linearSystem.getConstraints()[i].clone();
   }
 
-  public LinearSystem(BigDecimal[] ecoFunction, BigDecimal[][] constraints, int nbrVariables) {
-    this.ecoFunction = ecoFunction;
-    this.constraints = constraints;
-    this.nbrVariables = nbrVariables;
-  }
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -206,13 +211,13 @@ public class LinearSystem {
     return str;
   }
 
-  public void printSolution(){
-    String str = "";
-    int i = 0;
-    BigDecimal z = ecoFunction[ecoFunction.length - 1];
+  public void printSolution() {
+    String     str = "";
+    int        i   = 0;
+    BigDecimal z   = ecoFunction[ecoFunction.length - 1];
 
     str += "\nSolution : \n";
-    str += "Z = " +  z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
+    str += "Z = " + z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
 
     for (int solutionValueIndex : solutionValues) {
       str += "x" + (++i) + " = ";

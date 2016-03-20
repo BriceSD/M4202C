@@ -103,7 +103,9 @@ public class Simplex {
       }
     }
 
-    nextStep.getSolutionValues()[indexOfColumnToPutIn] = indexOfLineToExtract;
+    if (indexOfColumnToPutIn < currentStep.getNbrVariables())
+      nextStep.getSolutionValues()[indexOfColumnToPutIn] = indexOfLineToExtract;
+
     this.system.add(nextStep);
 
   }
@@ -120,8 +122,7 @@ public class Simplex {
   private int initialiseIndexOfLineToExtract(BigDecimal[][] constraints, int indexOfColumnToPutIn) {
     int initialIndexOfLineToExtract = 0;
 
-    while (isLowerOrEqualTo(
-        getRatio(constraints, initialIndexOfLineToExtract, indexOfColumnToPutIn), BigDecimal.ZERO))
+    while (isLowerOrEqualTo(constraints[initialIndexOfLineToExtract][indexOfColumnToPutIn], BigDecimal.ZERO))
       initialIndexOfLineToExtract++;
 
     return initialIndexOfLineToExtract;
@@ -162,7 +163,7 @@ public class Simplex {
   }
 
   private void printTab() {
-    String str = getCurrentStepNumber() == 0 ? "Tableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
+    String str = getCurrentStepNumber() == 0 ? "\n\nTableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
 
     System.out.println(str);
     getCurrentStep().printTab();
