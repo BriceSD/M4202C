@@ -46,10 +46,6 @@ public class Simplex {
     return value.compareTo(valueToCompare) == -1;
   }
 
-  public LinearSystem getStep(int step) {
-    return system.get(step);
-  }
-
   public void solveLinearProblem() {
       printTab();
 
