@@ -168,10 +168,9 @@ public class LinearSystem {
 
     for (int solutionValueIndex : solutionValues) {
       str += "x" + (++i) + " = ";
-      if (solutionValueIndex != -1)
-        str += getLineValue(solutionValueIndex).setScale(2, RoundingMode.HALF_EVEN).toPlainString();
-      else
-        str += "0";
+      str += solutionValueIndex != -1 ?
+             getLineValue(solutionValueIndex).setScale(2, RoundingMode.HALF_EVEN).toPlainString() :
+             "0";
       str += "\n";
     }
     return str;
