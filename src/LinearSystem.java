@@ -7,7 +7,6 @@
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Scanner;
 
 public class LinearSystem {
 
@@ -20,13 +19,6 @@ public class LinearSystem {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-  public LinearSystem() {
-    BigDecimal[] partialEcoFunction = askEcoFunction();
-    //FAIRE LES CONTRAINTES EN PREMIER
-    makeConstraints(askConstraints());
-    makeEcoFunction(partialEcoFunction);
-    initializeSolutionValues();
-  }
 
   public LinearSystem(BigDecimal[] partialEcoFunction, BigDecimal[][] partialConstraints,
       int nbrVariables) {
@@ -37,30 +29,6 @@ public class LinearSystem {
     initializeSolutionValues();
   }
 
-  private BigDecimal[] askEcoFunction() {
-    Scanner      sc = new Scanner(System.in);
-    BigDecimal[] partialEcoFunction;
-
-    System.out.println("Entrez le nombre de variables : ");
-    nbrVariables = sc.nextInt();
-    partialEcoFunction = new BigDecimal[nbrVariables + 1];
-
-    System.out.println("\nFonction économique : ");
-
-    int        i = 0;
-    BigDecimal valeur;
-    while (i < nbrVariables) {
-      System.out.print("x" + (i + 1) + " : ");
-      valeur = sc.nextBigDecimal();
-      partialEcoFunction[i] = valeur;
-      i++;
-    }
-
-    partialEcoFunction[i] = BigDecimal.ZERO;
-
-
-    return partialEcoFunction;
-  }
 
   private void initializeSolutionValues() {
     solutionValues = new int[nbrVariables];
@@ -96,31 +64,6 @@ public class LinearSystem {
     return constraints[line][getConstraintsLength() - 1];
   }
 
-  private BigDecimal[][] askConstraints() {
-    Scanner        sc = new Scanner(System.in);
-    BigDecimal[][] partialConstraints;
-    BigDecimal     variable;
-    int            nbrConstraints;
-    int            i, j;
-
-    System.out.print("\nNombre de contraintes : ");
-    nbrConstraints = sc.nextInt();
-    partialConstraints = new BigDecimal[nbrConstraints][];
-
-    for (i = 0; i < nbrConstraints; i++) {
-      partialConstraints[i] = new BigDecimal[nbrVariables + 1];
-      for (j = 0; j < nbrVariables; j++) {
-        System.out.print("x" + (j + 1) + " : ");
-        variable = sc.nextBigDecimal();
-        partialConstraints[i][j] = variable;
-      }
-      System.out.print("Valeur : ");
-      variable = sc.nextBigDecimal();
-      partialConstraints[i][j] = variable;
-      System.out.println();
-    }
-    return partialConstraints;
-  }
 
   private void makeEcoFunction(BigDecimal[] partialEcoFunction) {
     this.ecoFunction = new BigDecimal[getConstraintsLength()];

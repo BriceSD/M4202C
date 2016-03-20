@@ -3,9 +3,9 @@ public class Main {
 // --------------------------- main() method ---------------------------
 
   public static void main(String[] args) {
-    LinearSystem ls = new LinearSystem();
+    LinearSystemConstructor lsc = new LinearSystemConstructor();
 
-    Simplex simplex = new Simplex(ls);
+    Simplex simplex = new Simplex(lsc.execute());
     simplex.solveLinearProblem();
   }
 }
