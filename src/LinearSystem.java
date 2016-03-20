@@ -19,6 +19,15 @@ public class LinearSystem {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
+  public LinearSystem(LinearSystem linearSystem) {
+    this.ecoFunction = linearSystem.getEcoFunction().clone();
+    this.solutionValues = linearSystem.getSolutionValues().clone();
+    this.nbrVariables = linearSystem.getNbrVariables();
+    this.constraints = new BigDecimal[linearSystem.getConstraints().length][];
+
+    for (int i = 0; i < this.constraints.length; i++)
+      this.constraints[i] = linearSystem.getConstraints()[i].clone();
+  }
 
   public LinearSystem(BigDecimal[] partialEcoFunction, BigDecimal[][] partialConstraints,
       int nbrVariables) {
@@ -27,13 +36,6 @@ public class LinearSystem {
     makeConstraints(partialConstraints);
     makeEcoFunction(partialEcoFunction);
     initializeSolutionValues();
-  }
-
-
-  private void initializeSolutionValues() {
-    solutionValues = new int[nbrVariables];
-    for (int i = 0; i < nbrVariables; i++)
-      solutionValues[i] = -1;
   }
 
   private void makeConstraints(BigDecimal[][] partialConstraints) {
@@ -60,10 +62,6 @@ public class LinearSystem {
 
   private int getConstraintsLength() {return constraints[0].length;}
 
-  public BigDecimal getLineValue(int line) {
-    return constraints[line][getConstraintsLength() - 1];
-  }
-
 
   private void makeEcoFunction(BigDecimal[] partialEcoFunction) {
     this.ecoFunction = new BigDecimal[getConstraintsLength()];
@@ -74,16 +72,12 @@ public class LinearSystem {
     ecoFunction[ecoFunction.length - 1] = partialEcoFunction[partialEcoFunction.length - 1];
   }
 
-  public LinearSystem(LinearSystem linearSystem) {
-    this.ecoFunction = linearSystem.getEcoFunction().clone();
-    this.solutionValues = linearSystem.getSolutionValues().clone();
-    this.nbrVariables = linearSystem.getNbrVariables();
-    this.constraints = new BigDecimal[linearSystem.getConstraints().length][];
 
-    for (int i = 0; i < this.constraints.length; i++)
-      this.constraints[i] = linearSystem.getConstraints()[i].clone();
+  private void initializeSolutionValues() {
+    solutionValues = new int[nbrVariables];
+    for (int i = 0; i < nbrVariables; i++)
+      solutionValues[i] = -1;
   }
-
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -103,12 +97,38 @@ public class LinearSystem {
     this.ecoFunction = ecoFunction;
   }
 
+  public BigDecimal getLineValue(int line) {
+    return constraints[line][getConstraintsLength() - 1];
+  }
+
   public int getNbrVariables() {
     return nbrVariables;
   }
 
   public int[] getSolutionValues() {
     return solutionValues;
+  }
+
+  public void printSolution() {
+    System.out.println(getSolution());
+  }
+
+  public String getSolution() {
+    String     str = "";
+    int        i   = 0;
+    BigDecimal z   = ecoFunction[ecoFunction.length - 1];
+
+    str += "\nSolution : \n";
+    str += "Z = " + z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
+
+    for (int solutionValueIndex : solutionValues) {
+      str += "x" + (++i) + " = ";
+      str += solutionValueIndex != -1 ?
+             getLineValue(solutionValueIndex).setScale(2, RoundingMode.HALF_EVEN).toPlainString() :
+             "0";
+      str += "\n";
+    }
+    return str;
   }
 
   public void printTab() {
@@ -151,28 +171,6 @@ public class LinearSystem {
       str += "\n";
     }
     str += "\n";
-    return str;
-  }
-
-  public void printSolution() {
-    System.out.println(getSolution());
-  }
-
-  public String getSolution() {
-    String     str = "";
-    int        i   = 0;
-    BigDecimal z   = ecoFunction[ecoFunction.length - 1];
-
-    str += "\nSolution : \n";
-    str += "Z = " + z.negate().setScale(2, RoundingMode.HALF_EVEN).toPlainString() + "\n";
-
-    for (int solutionValueIndex : solutionValues) {
-      str += "x" + (++i) + " = ";
-      str += solutionValueIndex != -1 ?
-             getLineValue(solutionValueIndex).setScale(2, RoundingMode.HALF_EVEN).toPlainString() :
-             "0";
-      str += "\n";
-    }
     return str;
   }
 }
