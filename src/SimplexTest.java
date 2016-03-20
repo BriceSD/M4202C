@@ -4,7 +4,9 @@
  * 20/03/16
  */
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 
@@ -12,6 +14,9 @@ import static junit.framework.TestCase.assertEquals;
 
 //@RunWith(HierarchicalContextRunner.class)
 public class SimplexTest {
+ @Rule
+  public final ExpectedException exception = ExpectedException.none();
+
   Simplex simplex;
 
   private void instantiateExo1() {
@@ -148,6 +153,132 @@ public class SimplexTest {
 
     LinearSystem linearSystem =
         new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
+    this.simplex = new Simplex(linearSystem);
+  }
+
+  private void instantiateExo11() {
+    //Solutions multiples
+    BigDecimal[]   partialEcoFunction;
+    BigDecimal[][] partialConstraints;
+    int            nbrVariables;
+
+    nbrVariables = 2;
+    partialEcoFunction = new BigDecimal[nbrVariables + 1];
+    partialConstraints = new BigDecimal[2][nbrVariables + 1];
+
+    partialEcoFunction[0] = BigDecimal.valueOf(2);
+    partialEcoFunction[1] = BigDecimal.valueOf(1);
+    partialEcoFunction[2] = BigDecimal.ZERO;
+
+    partialConstraints[0][0] = BigDecimal.valueOf(-1);
+    partialConstraints[0][1] = BigDecimal.valueOf(1);
+    partialConstraints[0][2] = BigDecimal.valueOf(1);
+
+    partialConstraints[1][0] = BigDecimal.valueOf(1);
+    partialConstraints[1][1] = BigDecimal.valueOf(-2);
+    partialConstraints[1][2] = BigDecimal.valueOf(2);
+
+    LinearSystem linearSystem =
+        new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
+    this.simplex = new Simplex(linearSystem);
+  }
+
+  private void instantiateExo12() {
+    //Pas de solution
+    BigDecimal[]   partialEcoFunction;
+    BigDecimal[][] partialConstraints;
+    int            nbrVariables;
+
+    nbrVariables = 2;
+    partialEcoFunction = new BigDecimal[nbrVariables + 1];
+    partialConstraints = new BigDecimal[3][nbrVariables + 1];
+
+    partialEcoFunction[0] = BigDecimal.valueOf(6);
+    partialEcoFunction[1] = BigDecimal.valueOf(3);
+    partialEcoFunction[2] = BigDecimal.ZERO;
+
+    partialConstraints[0][0] = BigDecimal.valueOf(2);
+    partialConstraints[0][1] = BigDecimal.valueOf(1);
+    partialConstraints[0][2] = BigDecimal.valueOf(6);
+
+    partialConstraints[1][0] = BigDecimal.valueOf(1);
+    partialConstraints[1][1] = BigDecimal.valueOf(-1);
+    partialConstraints[1][2] = BigDecimal.valueOf(2);
+
+    partialConstraints[2][0] = BigDecimal.valueOf(0);
+    partialConstraints[2][1] = BigDecimal.valueOf(1);
+    partialConstraints[2][2] = BigDecimal.valueOf(3);
+
+    LinearSystem linearSystem =
+        new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
+    this.simplex = new Simplex(linearSystem);
+  }
+
+  private void instantiateExo14() {
+    //Dégénérescence
+    BigDecimal[]   partialEcoFunction;
+    BigDecimal[][] partialConstraints;
+    int            nbrVariables;
+
+    nbrVariables = 2;
+    partialEcoFunction = new BigDecimal[nbrVariables + 1];
+    partialConstraints = new BigDecimal[3][nbrVariables + 1];
+
+    partialEcoFunction[0] = BigDecimal.valueOf(2);
+    partialEcoFunction[1] = BigDecimal.valueOf(1);
+    partialEcoFunction[2] = BigDecimal.ZERO;
+
+    partialConstraints[0][0] = BigDecimal.valueOf(3);
+    partialConstraints[0][1] = BigDecimal.valueOf(1);
+    partialConstraints[0][2] = BigDecimal.valueOf(6);
+
+    partialConstraints[1][0] = BigDecimal.valueOf(1);
+    partialConstraints[1][1] = BigDecimal.valueOf(-1);
+    partialConstraints[1][2] = BigDecimal.valueOf(2);
+
+    partialConstraints[2][0] = BigDecimal.valueOf(0);
+    partialConstraints[2][1] = BigDecimal.valueOf(1);
+    partialConstraints[2][2] = BigDecimal.valueOf(3);
+
+    LinearSystem linearSystem = new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
+    this.simplex = new Simplex(linearSystem);
+  }
+
+  private void instantiateExo16() {
+    //Cyclage
+    BigDecimal[]   partialEcoFunction;
+    BigDecimal[][] partialConstraints;
+    int            nbrVariables;
+
+    nbrVariables = 4;
+    partialEcoFunction = new BigDecimal[nbrVariables + 1];
+    partialConstraints = new BigDecimal[3][nbrVariables + 1];
+
+    partialEcoFunction[0] = BigDecimal.valueOf(0.75);
+    partialEcoFunction[1] = BigDecimal.valueOf(-20);
+    partialEcoFunction[2] = BigDecimal.valueOf(0.5);
+    partialEcoFunction[3] = BigDecimal.valueOf(-6);
+    partialEcoFunction[4] = BigDecimal.ZERO;
+
+    partialConstraints[0][0] = BigDecimal.valueOf(0.25);
+    partialConstraints[0][1] = BigDecimal.valueOf(-8);
+    partialConstraints[0][2] = BigDecimal.valueOf(-1);
+    partialConstraints[0][3] = BigDecimal.valueOf(9);
+    partialConstraints[0][4] = BigDecimal.valueOf(0);
+
+    partialConstraints[1][0] = BigDecimal.valueOf(0.5);
+    partialConstraints[1][1] = BigDecimal.valueOf(-12);
+    partialConstraints[1][2] = BigDecimal.valueOf(-0.5);
+    partialConstraints[1][3] = BigDecimal.valueOf(3);
+    partialConstraints[1][4] = BigDecimal.valueOf(0);
+
+    partialConstraints[2][0] = BigDecimal.valueOf(0);
+    partialConstraints[2][1] = BigDecimal.valueOf(0);
+    partialConstraints[2][2] = BigDecimal.valueOf(1);
+    partialConstraints[2][3] = BigDecimal.valueOf(0);
+    partialConstraints[2][4] = BigDecimal.valueOf(1);
+
+    LinearSystem linearSystem = new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
     this.simplex = new Simplex(linearSystem);
   }
 
@@ -327,6 +458,42 @@ public class SimplexTest {
     instantiateExo4();
     simplex.solveLinearProblem();
     assertEquals("\nSolution : \nZ = 151.20\nx1 = 0\nx2 = 0\nx3 = 8.40\nx4 = 0\n", simplex.getSolution());
+  }
+
+  @Test
+  public void exo11() throws Exception {
+    //Problème non borné
+    System.out.println("\n\nExo 11, non borné :");
+    instantiateExo11();
+    exception.expectMessage("Problème non borné");
+    simplex.solveLinearProblem();
+  }
+
+  @Test
+  public void exo12() throws Exception {
+    //Problème avec plusieurs solutions
+    System.out.println("\n\nExo 12, plusieurs solutions possible :");
+    instantiateExo12();
+    simplex.solveLinearProblem();
+    assertEquals("\nSolution : \nZ = 18.00\nx1 = 2.67\nx2 = 0.67\n", simplex.getSolution());
+  }
+
+  @Test
+  public void exo14() throws Exception {
+    //Dégénérescence
+    System.out.println("\n\nExo 14, dégénérescence : ");
+    instantiateExo14();
+    simplex.solveLinearProblem();
+    assertEquals("\nSolution : \nZ = 5.00\nx1 = 1.00\nx2 = 3.00\n", simplex.getSolution());
+  }
+
+  @Test
+  public void exo16() throws Exception {
+    //Dégénérescence
+    System.out.println("\n\nExo 16, cyclage : ");
+    instantiateExo16();
+    //simplex.solveLinearProblem();
+    //assertEquals("\nSolution : \nZ = 5.00\nx1 = 1.00\nx2 = 3.00\n", simplex.getSolution());
   }
 
   @Test

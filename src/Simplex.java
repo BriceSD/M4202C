@@ -11,6 +11,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.fail;
+
 public class Simplex {
 
 // ------------------------------ FIELDS ------------------------------
@@ -49,13 +51,13 @@ public class Simplex {
   }
 
   public void solveLinearProblem() {
-    printTab();
-
-    while (!isOptimalSolution()) {
-      computeNextStep();
       printTab();
-    }
-    printSolution();
+
+      while (!isOptimalSolution() && isBornee()) {
+        computeNextStep();
+        printTab();
+      }
+      printSolution();
   }
 
   private boolean isOptimalSolution() {
@@ -66,6 +68,21 @@ public class Simplex {
         return false;
     }
     return true;
+  }
+
+  private boolean isBornee() {
+    boolean isBornee = !(getIndexOfLineToExtract(getIndexOfColumnToPutIn()) == -1);
+    //getCurrentStep().setBornee(isBornee);
+    if (!isBornee) {
+      System.out.println("Erreur : problème non borné.");
+      try {
+        fail("Problème non borné");
+        throw new Exception("Problème non borné");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return isBornee;
   }
 
   private boolean isGreaterThan(BigDecimal value, BigDecimal valueToCompare) {
@@ -115,6 +132,9 @@ public class Simplex {
     final BigDecimal[][] constraints = getCurrentStep().getConstraints();
 
     initialIndexOfLineToExtract = initialiseIndexOfLineToExtract(constraints, indexOfColumnToPutIn);
+    if (initialIndexOfLineToExtract == -1) {
+      return -1;
+    }
 
     return getSmallestRatiosLine(constraints, indexOfColumnToPutIn, initialIndexOfLineToExtract);
   }
@@ -122,8 +142,11 @@ public class Simplex {
   private int initialiseIndexOfLineToExtract(BigDecimal[][] constraints, int indexOfColumnToPutIn) {
     int initialIndexOfLineToExtract = 0;
 
-    while (isLowerOrEqualTo(constraints[initialIndexOfLineToExtract][indexOfColumnToPutIn], BigDecimal.ZERO))
+    while (isLowerOrEqualTo(constraints[initialIndexOfLineToExtract][indexOfColumnToPutIn], BigDecimal.ZERO)) {
       initialIndexOfLineToExtract++;
+      if (initialIndexOfLineToExtract >= constraints.length)
+        return -1;
+    }
 
     return initialIndexOfLineToExtract;
   }
