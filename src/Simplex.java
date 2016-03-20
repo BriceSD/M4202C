@@ -75,14 +75,9 @@ public class Simplex {
     //getCurrentStep().setBornee(isBornee);
     if (!isBornee) {
       System.out.println("Erreur : problème non borné.");
-      try {
-        fail("Problème non borné");
-        throw new Exception("Problème non borné");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      fail("Problème non borné");
     }
-    return isBornee;
+    return true;
   }
 
   private boolean isGreaterThan(BigDecimal value, BigDecimal valueToCompare) {
@@ -132,9 +127,8 @@ public class Simplex {
     final BigDecimal[][] constraints = getCurrentStep().getConstraints();
 
     initialIndexOfLineToExtract = initialiseIndexOfLineToExtract(constraints, indexOfColumnToPutIn);
-    if (initialIndexOfLineToExtract == -1) {
+    if (initialIndexOfLineToExtract == -1)
       return -1;
-    }
 
     return getSmallestRatiosLine(constraints, indexOfColumnToPutIn, initialIndexOfLineToExtract);
   }
