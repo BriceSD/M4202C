@@ -85,16 +85,8 @@ public class LinearSystem {
     return constraints;
   }
 
-  public void setConstraints(BigDecimal[][] constraints) {
-    this.constraints = constraints;
-  }
-
   public BigDecimal[] getEcoFunction() {
     return ecoFunction;
-  }
-
-  public void setEcoFunction(BigDecimal[] ecoFunction) {
-    this.ecoFunction = ecoFunction;
   }
 
   public BigDecimal getLineValue(int line) {
@@ -108,6 +100,7 @@ public class LinearSystem {
   public int[] getSolutionValues() {
     return solutionValues;
   }
+
 
   public void printSolution() {
     System.out.println(getSolution());
