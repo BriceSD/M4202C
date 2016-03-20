@@ -162,8 +162,12 @@ public class Simplex {
     return system.get(system.size() - 1);
   }
 
+  public String getSolution() {
+    return getCurrentStep().getSolution();
+  }
+
   private void printTab() {
-    String str = getCurrentStepNumber() == 0 ? "\n\nTableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
+    String str = getCurrentStepNumber() == 0 ? "Tableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
 
     System.out.println(str);
     getCurrentStep().printTab();

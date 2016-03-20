@@ -212,6 +212,10 @@ public class LinearSystem {
   }
 
   public void printSolution() {
+    System.out.println(getSolution());
+  }
+
+  public String getSolution() {
     String     str = "";
     int        i   = 0;
     BigDecimal z   = ecoFunction[ecoFunction.length - 1];
@@ -227,7 +231,6 @@ public class LinearSystem {
         str += "0";
       str += "\n";
     }
-
-    System.out.println(str);
+    return str;
   }
 }
