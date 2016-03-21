@@ -19,6 +19,13 @@ public class LinearSystemTest {
     //this.linearSystem = null;
   }
 
+  @Test
+  public void whenInitialise_shouldBeInitialised() throws Exception {
+    instantiateExo2();
+    linearSystem.printTab();
+
+  }
+
   private void instantiateExo2() {
     BigDecimal[]   partialEcoFunction;
     BigDecimal[][] partialConstraints;
@@ -45,14 +52,6 @@ public class LinearSystemTest {
     partialConstraints[2][2] = BigDecimal.valueOf(90);
 
     this.linearSystem = new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
-  }
-
-
-  @Test
-  public void whenInitialise_shouldBeInitialised() throws Exception {
-    instantiateExo2();
-    linearSystem.printTab();
-
   }
 
   @After

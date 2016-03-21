@@ -10,13 +10,19 @@ import java.util.Scanner;
 
 public class LinearSystemConstructor {
 
+// ------------------------------ FIELDS ------------------------------
+
   private int nbrVariables;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
   public LinearSystemConstructor() {
   }
 
-  public LinearSystem execute(){
-    BigDecimal[] partialEcoFunction = askEcoFunction();
+// -------------------------- OTHER METHODS --------------------------
+
+  public LinearSystem execute() {
+    BigDecimal[]   partialEcoFunction = askEcoFunction();
     BigDecimal[][] partialConstraints = askConstraints();
     return new LinearSystem(partialEcoFunction, partialConstraints, nbrVariables);
   }
@@ -28,7 +34,7 @@ public class LinearSystemConstructor {
     do {
       System.out.println("Entrez le nombre de variables : ");
       nbrVariables = sc.nextInt();
-    }while (nbrVariables <= 0);
+    } while (nbrVariables <= 0);
     partialEcoFunction = new BigDecimal[nbrVariables + 1];
 
     System.out.println("\nFonction économique : ");
@@ -58,7 +64,7 @@ public class LinearSystemConstructor {
     do {
       System.out.print("\nNombre de contraintes : ");
       nbrConstraints = sc.nextInt();
-    }while (nbrConstraints <= 0);
+    } while (nbrConstraints <= 0);
     partialConstraints = new BigDecimal[nbrConstraints][];
 
     for (i = 0; i < nbrConstraints; i++) {

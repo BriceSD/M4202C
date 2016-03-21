@@ -46,14 +46,22 @@ public class Simplex {
     return value.compareTo(valueToCompare) == -1;
   }
 
-  public void solveLinearProblem() {
-      printTab();
+  public String getSolution() {
+    return getCurrentStep().getSolution();
+  }
 
-      while (!isOptimalSolution() && isBornee()) {
-        computeNextStep();
-        printTab();
-      }
-      printSolution();
+  private LinearSystem getCurrentStep() {
+    return system.get(system.size() - 1);
+  }
+
+  public void solveLinearProblem() {
+    printTab();
+
+    while (!isOptimalSolution() && isBornee()) {
+      computeNextStep();
+      printTab();
+    }
+    printSolution();
   }
 
   private boolean isOptimalSolution() {
@@ -66,6 +74,10 @@ public class Simplex {
     return true;
   }
 
+  private boolean isGreaterThan(BigDecimal value, BigDecimal valueToCompare) {
+    return value.compareTo(valueToCompare) == 1;
+  }
+
   private boolean isBornee() {
     boolean isBornee = !(getIndexOfLineToExtract(getIndexOfColumnToPutIn()) == -1);
     //getCurrentStep().setBornee(isBornee);
@@ -76,8 +88,58 @@ public class Simplex {
     return true;
   }
 
-  private boolean isGreaterThan(BigDecimal value, BigDecimal valueToCompare) {
-    return value.compareTo(valueToCompare) == 1;
+  private int getIndexOfLineToExtract(int indexOfColumnToPutIn) {
+    int                  initialIndexOfLineToExtract;
+    final BigDecimal[][] constraints = getCurrentStep().getConstraints();
+
+    initialIndexOfLineToExtract = initialiseIndexOfLineToExtract(constraints, indexOfColumnToPutIn);
+    if (initialIndexOfLineToExtract == -1)
+      return -1;
+
+    return getSmallestRatiosLine(constraints, indexOfColumnToPutIn, initialIndexOfLineToExtract);
+  }
+
+  private int initialiseIndexOfLineToExtract(BigDecimal[][] constraints, int indexOfColumnToPutIn) {
+    int initialIndexOfLineToExtract = 0;
+
+    while (isLowerOrEqualTo(constraints[initialIndexOfLineToExtract][indexOfColumnToPutIn],
+        BigDecimal.ZERO)) {
+      initialIndexOfLineToExtract++;
+      if (initialIndexOfLineToExtract >= constraints.length)
+        return -1;
+    }
+
+    return initialIndexOfLineToExtract;
+  }
+
+  private boolean isLowerOrEqualTo(BigDecimal variable, BigDecimal variableToCompare) {
+    return variable.compareTo(variableToCompare) == -1
+        || variable.compareTo(variableToCompare) == 0;
+  }
+
+  private int getSmallestRatiosLine(BigDecimal[][] constraints, int indexOfColumnToPutIn,
+      int indexOfLineToExtract) {
+    final int  nbLines = constraints.length;
+    BigDecimal newRatio, oldRatio;
+
+    for (int i = 0; i < nbLines; i++) {
+      if (isDifferentOfZero(constraints[i][indexOfColumnToPutIn])) {
+        newRatio = getRatio(constraints, i, indexOfColumnToPutIn);
+        oldRatio = getRatio(constraints, indexOfLineToExtract, indexOfColumnToPutIn);
+        if (isLowerThan(newRatio, oldRatio) && isGreaterThan(newRatio, BigDecimal.ZERO))
+          indexOfLineToExtract = i;
+      }
+    }
+    return indexOfLineToExtract;
+  }
+
+  private boolean isDifferentOfZero(BigDecimal variable) {
+    return variable.compareTo(BigDecimal.ZERO) != 0;
+  }
+
+  private BigDecimal getRatio(BigDecimal[][] constraints, int line, int column) {
+    return constraints[line][constraints[0].length - 1]
+        .divide(constraints[line][column], ROUND_SCALE, ROUND_EVEN);
   }
 
   private void computeNextStep() {
@@ -94,7 +156,8 @@ public class Simplex {
     for (int i = 0; i < nextStep.getEcoFunction().length; i++) {
       nextStep.getEcoFunction()[i] = nextStep.getEcoFunction()[i].subtract(
           coefficient.multiply(currentStep.getEcoFunction()[indexOfColumnToPutIn], PRECISION)
-            .multiply(currentStep.getConstraints()[indexOfLineToExtract][i], PRECISION), PRECISION);
+              .multiply(currentStep.getConstraints()[indexOfLineToExtract][i], PRECISION),
+          PRECISION);
     }
 
     for (int i = 0; i < currentStep.getConstraints().length; i++) {
@@ -118,69 +181,10 @@ public class Simplex {
 
   }
 
-  private int getIndexOfLineToExtract(int indexOfColumnToPutIn) {
-    int                  initialIndexOfLineToExtract;
-    final BigDecimal[][] constraints = getCurrentStep().getConstraints();
-
-    initialIndexOfLineToExtract = initialiseIndexOfLineToExtract(constraints, indexOfColumnToPutIn);
-    if (initialIndexOfLineToExtract == -1)
-      return -1;
-
-    return getSmallestRatiosLine(constraints, indexOfColumnToPutIn, initialIndexOfLineToExtract);
-  }
-
-  private int initialiseIndexOfLineToExtract(BigDecimal[][] constraints, int indexOfColumnToPutIn) {
-    int initialIndexOfLineToExtract = 0;
-
-    while (isLowerOrEqualTo(constraints[initialIndexOfLineToExtract][indexOfColumnToPutIn], BigDecimal.ZERO)) {
-      initialIndexOfLineToExtract++;
-      if (initialIndexOfLineToExtract >= constraints.length)
-        return -1;
-    }
-
-    return initialIndexOfLineToExtract;
-  }
-
-  private boolean isLowerOrEqualTo(BigDecimal variable, BigDecimal variableToCompare) {
-    return variable.compareTo(variableToCompare) == -1
-        || variable.compareTo(variableToCompare) == 0;
-  }
-
-  private BigDecimal getRatio(BigDecimal[][] constraints, int line, int column) {
-    return constraints[line][constraints[0].length - 1]
-        .divide(constraints[line][column], ROUND_SCALE, ROUND_EVEN);
-  }
-
-  private int getSmallestRatiosLine(BigDecimal[][] constraints, int indexOfColumnToPutIn,
-      int indexOfLineToExtract) {
-    final int  nbLines = constraints.length;
-    BigDecimal newRatio, oldRatio;
-
-    for (int i = 0; i < nbLines; i++) {
-      if (isDifferentOfZero(constraints[i][indexOfColumnToPutIn])) {
-        newRatio = getRatio(constraints, i, indexOfColumnToPutIn);
-        oldRatio = getRatio(constraints, indexOfLineToExtract, indexOfColumnToPutIn);
-        if (isLowerThan(newRatio, oldRatio) && isGreaterThan(newRatio, BigDecimal.ZERO))
-          indexOfLineToExtract = i;
-      }
-    }
-    return indexOfLineToExtract;
-  }
-
-  private boolean isDifferentOfZero(BigDecimal variable) {
-    return variable.compareTo(BigDecimal.ZERO) != 0;
-  }
-
-  private LinearSystem getCurrentStep() {
-    return system.get(system.size() - 1);
-  }
-
-  public String getSolution() {
-    return getCurrentStep().getSolution();
-  }
-
   private void printTab() {
-    String str = getCurrentStepNumber() == 0 ? "Tableau initial : " : "Tableau numéro " + getCurrentStepNumber() + " : ";
+    String str = getCurrentStepNumber() == 0 ?
+                 "Tableau initial : " :
+                 "Tableau numéro " + getCurrentStepNumber() + " : ";
 
     System.out.println(str);
     getCurrentStep().printTab();

@@ -29,6 +29,22 @@ public class LinearSystem {
       this.constraints[i] = linearSystem.getConstraints()[i].clone();
   }
 
+  public BigDecimal[] getEcoFunction() {
+    return ecoFunction;
+  }
+
+  public int[] getSolutionValues() {
+    return solutionValues;
+  }
+
+  public int getNbrVariables() {
+    return nbrVariables;
+  }
+
+  public BigDecimal[][] getConstraints() {
+    return constraints;
+  }
+
   public LinearSystem(BigDecimal[] partialEcoFunction, BigDecimal[][] partialConstraints,
       int nbrVariables) {
     this.nbrVariables = nbrVariables;
@@ -56,12 +72,7 @@ public class LinearSystem {
     }
   }
 
-  private boolean isInDiagonal(int nbrVariables, int currentLine, int currentColumn) {
-    return currentColumn - nbrVariables == currentLine;
-  }
-
-  private int getConstraintsLength() {return constraints[0].length;}
-
+// -------------------------- OTHER METHODS --------------------------
 
   private void makeEcoFunction(BigDecimal[] partialEcoFunction) {
     this.ecoFunction = new BigDecimal[getConstraintsLength()];
@@ -72,35 +83,17 @@ public class LinearSystem {
     ecoFunction[ecoFunction.length - 1] = partialEcoFunction[partialEcoFunction.length - 1];
   }
 
-
   private void initializeSolutionValues() {
     solutionValues = new int[nbrVariables];
     for (int i = 0; i < nbrVariables; i++)
       solutionValues[i] = -1;
   }
 
-// -------------------------- OTHER METHODS --------------------------
-
-  public BigDecimal[][] getConstraints() {
-    return constraints;
+  private boolean isInDiagonal(int nbrVariables, int currentLine, int currentColumn) {
+    return currentColumn - nbrVariables == currentLine;
   }
 
-  public BigDecimal[] getEcoFunction() {
-    return ecoFunction;
-  }
-
-  public BigDecimal getLineValue(int line) {
-    return constraints[line][getConstraintsLength() - 1];
-  }
-
-  public int getNbrVariables() {
-    return nbrVariables;
-  }
-
-  public int[] getSolutionValues() {
-    return solutionValues;
-  }
-
+  private int getConstraintsLength() {return constraints[0].length;}
 
   public void printSolution() {
     System.out.println(getSolution());
@@ -122,6 +115,10 @@ public class LinearSystem {
       str += "\n";
     }
     return str;
+  }
+
+  public BigDecimal getLineValue(int line) {
+    return constraints[line][getConstraintsLength() - 1];
   }
 
   public void printTab() {
